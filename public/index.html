@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JustTheArticle</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 2em;
+      background: #f8f8f8;
+    }
+    textarea, input, button {
+      width: 100%;
+      padding: 1em;
+      margin: 1em 0;
+      font-size: 1em;
+    }
+    #summary {
+      background: white;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>📰 JustTheArticle</h1>
+  <p>Paste an article URL to get a clean summary (TL;DR + bullet list)</p>
+  <input id="urlInput" type="text" placeholder="https://example.com/article" />
+  <button onclick="summarize()">Extract & Summarize</button>
+  <div id="summary"></div>
+
+  <script>
+    async function summarize() {
+      const url = document.getElementById("urlInput").value;
+      const summaryDiv = document.getElementById("summary");
+      summaryDiv.innerHTML = "<p>⏳ Summarizing...</p>";
+
+      const response = await fetch("/summarize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url })
+      });
+
+      const data = await response.json();
+      if (data.summary) {
+        summaryDiv.innerHTML = `
+          <h2>${data.title}</h2>
+          <pre>${data.summary}</pre>
+        `;
+      } else {
+        summaryDiv.innerHTML = "<p>⚠️ Error summarizing article.</p>";
+      }
+    }
+  </script>
+</body>
+</html>
